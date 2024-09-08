@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+        
+    </title>
+
+</head>
+
+<body>
+    <h1>
+       
+    </h1>
+    <p>This is the homepage rendered with EJS.</p>
+
+    <div style="display: block;">
+        <a href="/login">Login</a>
+        <a href="/register">Register</a>
+        <a href="/user">User</a>
+        <a href="/books">Books</a>
+    </div>
+
+    <div>
+        <div>
+            <h2>Register</h2>
+            <form id="registerForm" style="display: flex; flex-direction: column; width: 400px;">
+                <label for="name">Name:</label>
+                <input type="text" id="name" required>
+                <label for="email">Email:</label>
+                <input type="email" id="registerEmail" required>
+                <label for="password">Password:</label>
+                <input type="password" id="registerPassword" required>
+                <br>
+                <button type="submit">Register</button>
+            </form>
+        </div>
+
+        <div>
+            <h2>Login</h2>
+            <form id="loginForm" style="display: flex; flex-direction: column; width: 400px;">
+                <label for="email">Email:</label>
+                <input type="email" id="loginEmail" required>
+                <label for="password">Password:</label>
+                <input type="password" id="loginPassword" required>
+                <br>
+                <button type="submit">Login</button>
+            </form>
+        </div>
+
+
+    </div>
+
+    <h1>All Users</h1>
+    <button id="fetchAllUsers">Fetch All Users</button>
+    <div id="userList"></div>
+
+    <script>
+        // Function to validate email format
+        function isValidEmail(email) {
+            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailPattern.test(email);
+        }
+
+        document.getElementById("registerForm").addEventListener("submit", async (event) => {
+            event.preventDefault();
+
+            const name = document.getElementById("name").value;
+            const email = document.getElementById("registerEmail").value;
+            const password = document.getElementById("registerPassword").value;
+
+            // Validate email format
+            if (!isValidEmail(email)) {
+                alert('Invalid email format');
+                return;
+            }
+
+            try {
+                const response = await fetch("http://localhost:8383/user/create", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ name, email, password })
+                });
+
+                const data = await response.json();
+                if (response.ok) {
+                    console.log('User registered:', data);
+                    alert('Registration successful!');
+                } else {
+                    console.error('Error registering user:', response.status, data.message);
+                    alert(`Error registering user: ${data.message}`);
+                }
+            } catch (error) {
+                console.error('Request failed:', error);
+                alert('Request failed, check console for details.');
+            }
+        });
+
+        document.getElementById('loginForm').addEventListener('submit', async (event) => {
+            event.preventDefault(); // Prevent form from refreshing the page
+
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+
+            // Validate email format
+            if (!isValidEmail(email)) {
+                alert('Invalid email format');
+                return;
+            }
+
+            try {
+                const response = await fetch('http://localhost:8383/user/login', {
+                    method: 'POST', // Specify POST method
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ email, password })
+                });
+
+                const data = await response.json();
+                if (response.ok) {
+                    console.log('User logged in:', data);
+                    alert('Login successful!');
+                } else {
+                    console.error('Error logging in:', response.status, data.message);
+                    alert(`Error logging in: ${data.message}`);
+                }
+            } catch (error) {
+                console.error('Request failed:', error);
+                alert('Request failed, check console for details.');
+            }
+        });
+
+        document.getElementById('fetchAllUsers').addEventListener('click', async () => {
+            try {
+                const response = await fetch('http://localhost:8383/user/all');
+                if (response.ok) {
+                    const users = await response.json();
+                    const userList = document.getElementById('userList');
+                    userList.innerHTML = ''; // Clear existing content
+                    users.forEach(user => {
+                        userList.innerHTML += `
+                            <div>
+                                <p>Name: ${user.name}</p>
+                                <p>Email: ${user.email}</p>
+                                <p>Role: ${user.role}</p>
+                            </div>
+                            <hr>
+                        `;
+                    });
+                } else {
+                    console.error('Error fetching users:', response.status);
+                    document.getElementById('userList').innerHTML = 'Error fetching users';
+                }
+            } catch (error) {
+                console.error('Request failed:', error);
+                document.getElementById('userList').innerHTML = 'Request failed';
+            }
+        });
+    </script>
+
+</body>
+
+</html>
