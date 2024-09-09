@@ -1,48 +1,33 @@
 import connection from "../db/connection.js";
 
 class BooksModel {
-    async createBooks(bookData) {
-        const { title, author_name, published_date } = bookData;
-
-        // Find or create the author first
-        let author_id;
-        const author = await this.findAuthorByName(author_name);
-        if (author) {
-            author_id = author.id;
-        } else {
-            // Handle the case where author doesn't exist. 
-            // You might need to create a new author.
-            // For simplicity, throw an error or handle this case.
-            throw new Error("Author does not exist");
-        }
-
+    // Create a new book with the provided author ID
+    async createBook({ title, author_id, published_date }) {
         const query = `INSERT INTO books (title, author_id, published_date) VALUES (?, ?, ?)`;
-
         try {
-            const [insertResult] = await connection.execute(query, [
-                title,
-                author_id,
-                published_date,
-            ]);
-            return insertResult.insertId;
+            const [insertResult] = await connection.execute(query, [title, author_id, published_date]);
+            return insertResult.insertId; // Return the new book ID
         } catch (error) {
             console.error("Error inserting book into database:", error);
             throw new Error("Error inserting book into database.");
         }
     }
 
-    async findAuthorByName(name) {
-        const query = `SELECT * FROM authors WHERE name = ?`;
+    // Fetch all books along with the author name
+    async findAllBooks() {
+        const query = `
+            SELECT books.id, books.title, books.published_date, authors.name AS author_name
+            FROM books
+            JOIN authors ON books.author_id = authors.id
+        `;
         try {
-            const [rows] = await connection.execute(query, [name]);
-            return rows[0]; // Return the author object
+            const [rows] = await connection.execute(query);
+            return rows;
         } catch (error) {
-            console.error("Error finding author by name:", error);
-            throw new Error("Error finding author by name.");
+            console.error("Error fetching books from database:", error);
+            throw new Error("Error fetching books from database.");
         }
     }
-
-    // Other methods...
 }
 
 export default new BooksModel();

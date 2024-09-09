@@ -4,86 +4,203 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/src/views/styles.css">
     <title>Library Management System</title>
+
 </head>
+<style>
+    /* General Styles */
+body {
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
+}
+
+header {
+    background: #333;
+    color: #fff;
+    padding: 1rem;
+    text-align: center;
+}
+
+header h1 {
+    margin: 0;
+}
+
+nav {
+    margin-top: 0.5rem;
+}
+
+nav a {
+    color: #fff;
+    margin: 0 1rem;
+    text-decoration: none;
+}
+
+nav a:hover {
+    text-decoration: underline;
+}
+
+/* Main Content */
+main {
+    padding: 1rem;
+}
+
+section {
+    margin-bottom: 2rem;
+}
+
+h2 {
+    background: #f4f4f4;
+    padding: 0.5rem;
+    border-radius: 5px;
+    margin-bottom: 1rem;
+}
+
+/* Forms */
+.form {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 500px;
+    margin: 0 auto;
+    padding: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background: #fff;
+}
+
+.form label {
+    margin-bottom: 0.5rem;
+}
+
+.form input {
+    padding: 0.5rem;
+    margin-bottom: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+.form button {
+    padding: 0.5rem;
+    border: none;
+    border-radius: 5px;
+    background: #333;
+    color: #fff;
+    cursor: pointer;
+}
+
+.form button:hover {
+    background: #555;
+}
+
+/* Table */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+}
+
+table th, table td {
+    padding: 0.75rem;
+    border: 1px solid #ddd;
+    text-align: left;
+}
+
+table th {
+    background: #f4f4f4;
+}
+
+/* User List */
+#userList {
+    margin-top: 1rem;
+}
+
+</style>
 
 <body>
-    <h1>Welcome to the Library Management System</h1>
-    <p>This is the homepage rendered with EJS.</p>
+    <header>
+        <h1>Welcome to the Library Management System</h1>
+        
+        <nav>
+            <a href="/login">Login</a>
+            <a href="/register">Register</a>
+            <a href="/user">User</a>
+            <a href="/books">Books</a>
+        </nav>
+    </header>
 
-    <div style="display: block;">
-        <a href="/login">Login</a>
-        <a href="/register">Register</a>
-        <a href="/user">User</a>
-        <a href="/books">Books</a>
-    </div>
-
-    <div>
-        <div>
+    <main>
+        <section>
             <h2>Register</h2>
-            <form id="registerForm" style="display: flex; flex-direction: column; width: 400px;">
+            <form id="registerForm" class="form">
                 <label for="name">Name:</label>
                 <input type="text" id="name" required>
                 <label for="email">Email:</label>
                 <input type="email" id="registerEmail" required>
                 <label for="password">Password:</label>
                 <input type="password" id="registerPassword" required>
-                <br>
                 <button type="submit">Register</button>
             </form>
-        </div>
+        </section>
 
-        <div>
+        <section>
             <h2>Login</h2>
-            <form id="loginForm" style="display: flex; flex-direction: column; width: 400px;">
+            <form id="loginForm" class="form">
                 <label for="email">Email:</label>
                 <input type="email" id="loginEmail" required>
                 <label for="password">Password:</label>
                 <input type="password" id="loginPassword" required>
-                <br>
                 <button type="submit">Login</button>
             </form>
-        </div>
+        </section>
 
-        <div>
+        <section>
             <h2>Books</h2>
-            <form id="booksForm" style="display: flex; flex-direction: column; width: 400px;">
+            <form id="booksForm" class="form">
                 <label for="title">Title:</label>
                 <input type="text" id="title" required>
-
                 <label for="author_name">Author Name:</label>
                 <input type="text" id="author_name" required>
-
                 <label for="published_date">Published Date:</label>
                 <input type="date" id="published_date" required>
-                <br>
-
                 <button type="submit">Create Book</button>
             </form>
-        </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>Title</th>
+                        <th>Author Name</th>
+                        <th>Published Date</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="bookList">
+                    <!-- Book entries will be dynamically inserted here -->
+                </tbody>
+            </table>
+        </section>
 
-        <div>
+        <!-- <section>
             <h2>Authors</h2>
-            <form id="authorsForm" style="display: flex; flex-direction: column; width: 400px;">
+            <form id="authorsForm" class="form">
                 <label for="name">Name:</label>
                 <input type="text" id="authorName" required>
-                <br>
                 <button type="submit">Create Author</button>
             </form>
-        </div>
+        </section> -->
 
-    </div>
+        <section>
+            <h1>All Users</h1>
+            <button id="fetchAllUsers">Fetch All Users</button>
+            <div id="userList">
+                <!-- User entries will be dynamically inserted here -->
+            </div>
+        </section>
+    </main>
 
-    <h1>All Users</h1>
-    <button id="fetchAllUsers">Fetch All Users</button>
-    <div id="userList"></div>
-
-    <h1>Books</h1>
-    <button id="fetchBooks">Fetch All Books</button>
-    <div id="bookList"></div>
-
-    <h2>Authors</h2>
-    <ul id="authorList"></ul>
 
     <script>
         // Function to validate email format
@@ -216,30 +333,34 @@
             }
         });
 
-        document.getElementById('fetchBooks').addEventListener('click', async () => {
+        window.addEventListener('DOMContentLoaded', async () => {
             try {
                 const response = await fetch('http://localhost:8383/book/all');
                 if (response.ok) {
                     const books = await response.json();
                     const bookList = document.getElementById('bookList');
                     bookList.innerHTML = ''; // Clear existing content
-                    books.forEach(book => {
+                    books.forEach((book, index) => {
                         bookList.innerHTML += `
-                    <div>
-                        <p>Title: ${book.title}</p>
-                        <p>Author Name: ${book.author_name}</p> <!-- Update to show author_name -->
-                        <p>Published Date: ${book.published_date}</p>
-                    </div>
-                    <hr>
-                `;
+                            <tr>
+                                <td>${index + 1}</td>
+                                <td>${book.title}</td>
+                                <td>${book.author_name}</td>
+                                <td>${book.published_date}</td>
+                                <td>
+                                    <button class="action-btn">Edit</button>
+                                    <button class="action-btn delete-btn">Delete</button>
+                                </td>
+                            </tr>
+                        `;
                     });
                 } else {
                     console.error('Error fetching books:', response.status);
-                    document.getElementById('bookList').innerHTML = 'Error fetching books';
+                    document.getElementById('bookList').innerHTML = '<tr><td colspan="5">Error fetching books</td></tr>';
                 }
             } catch (error) {
                 console.error('Request failed:', error);
-                document.getElementById('bookList').innerHTML = 'Request failed';
+                document.getElementById('bookList').innerHTML = '<tr><td colspan="5">Request failed</td></tr>';
             }
         });
 

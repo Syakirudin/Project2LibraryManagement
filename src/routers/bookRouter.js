@@ -12,7 +12,7 @@ BookRouter.get("/all", BooksController.getAllBooks);
 // Handle GET request to fetch all books and render them using EJS
 BookRouter.get("/", async (req, res) => {
     try {
-        const books = await BooksController.getAllBooks(req, res); // Fetch books
+        const books = await BooksController.getAllBooksForView(); // Fetch books from a new controller method
         res.render('books', { books }); // Render the 'books' view with fetched books
     } catch (error) {
         console.error("Error fetching books:", error);
