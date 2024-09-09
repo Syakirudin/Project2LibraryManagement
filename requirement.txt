@@ -1,0 +1,38 @@
+
+Database
+
+User
+username
+password
+email
+role librarian, admin
+
+Book
+image
+title
+author
+genre
+
+
+borrowdate
+
+
+
+
+
+API
+
+admin
+
+GET /libarian all books
+POST /librarian all books
+PUT /libarian/:id 
+DELETE /libarian/:id
+
+
+librarian
+
+GET /libarian all books
+POST /librarian all books
+PUT /libarian/:id 
+DELETE /libarian/:id

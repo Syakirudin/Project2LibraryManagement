@@ -7,6 +7,7 @@ class UserController {
         const { name, email, password } = req.body;
 
         try {
+            // Check if the user already exists
             const existingUser = await UserModel.findUserByEmail(email);
             if (existingUser) {
                 return res.status(400).json({ message: 'User with this email already exists' });
@@ -28,32 +29,23 @@ class UserController {
 
     async login(req, res) {
         const { email, password } = req.body;
-
+    
         try {
-            const user = await new UserModel().findUserByEmail(email);
-            if (!user) {
-                return res.status(400).json({ message: 'User not found' });
-            }
-
-            const isMatch = await bcrypt.compare(password, user.password);
-            if (!isMatch) {
-                return res.status(400).json({ message: 'Invalid credentials' });
-            }
-
+            // Verify the user credentials
+            const user = await UserModel.verifyUser(email, password);
+            
             // Generate JWT token
             const token = jwt.sign({ id: user.id, email: user.email }, process.env.JWT_SECRET, {
                 expiresIn: '1h'
             });
-
+    
             res.json({
                 message: 'Login successful',
                 token
             });
         } catch (error) {
-            res.status(500).json({
-                message: 'Error logging in',
-                error: error.message
-            });
+            console.error('Error logging in:', error);
+            res.status(400).json({ message: error.message });
         }
     }
 
