@@ -9,6 +9,12 @@ BookRouter.post("/create", BooksController.createBooks);
 // Handle GET request to fetch all books as JSON
 BookRouter.get("/all", BooksController.getAllBooks);
 
+//update 
+BookRouter.put("/update", BooksController.updateBooks);
+
+// Route to delete a book by its ID
+BookRouter.delete("/delete/:bookId", BooksController.deleteBook);
+
 // Handle GET request to fetch all books and render them using EJS
 BookRouter.get("/", async (req, res) => {
     try {

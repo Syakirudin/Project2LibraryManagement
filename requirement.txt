@@ -1,6 +1,8 @@
 
 Database
 
+
+
 User
 username
 password
@@ -13,14 +15,28 @@ title
 author
 genre
 
-
-borrowdate
-
+transaction
 
 
 
 
-API
+
+LOGIN/LOGOUT
+
+register
+Authorization
+
+
+
+///////API//////////
+
+user
+
+GET /user all books
+POST /user 
+PUT /user/:id 
+DELETE /user/:id
+
 
 admin
 
@@ -29,10 +45,87 @@ POST /librarian all books
 PUT /libarian/:id 
 DELETE /libarian/:id
 
+transaction
 
-librarian
+GET /borrow
+POST /borrow
+PUT /borrow/:id
+DELETE /borrow/:id
 
-GET /libarian all books
-POST /librarian all books
-PUT /libarian/:id 
-DELETE /libarian/:id
+
+///////////////////////////////////////////////////////////////////////////////////////////
+
+// Design API for the library management APP
+
+// CRUD operations for books
+
+1. Add a book to the library
+/book [POST]
+
+2. Get all books from the library
+/book [GET]
+
+3. Get book by id from the library
+/book/:bookId [GET]
+
+4. Update book data from the library by id
+/book/:bookId [PUT]
+
+5. Remove book from library
+/book/:bookId [DELETE]
+
+
+// CRUD operations for users
+
+1. Create new user
+/auth/register [POST]
+
+2. Login user
+/auth/login [POST]
+
+3. Get user profile
+/user [GET]
+
+4. Update user information
+/user [PUT]
+
+5. Delete user
+/user [DELETE]
+
+Please note we don't need to pass the user id manually.
+It will be picked up from the auth step, via auth middleware
+req.user = user (auth middleware)
+
+
+
+
+// CRUD operations for library transactions
+// Issue a book, update book return status, record payment details for book issue
+
+1. Issue a book to a reader
+ /books/issue [POST]
+
+2. Update book return status
+/books/:bookId/return [POST]
+
+3. Record payment while issuing a book
+/books/payment/:bookId
+
+Should allow librarians to access certain endpoints
+(Authorization) 
+That means we need role based access
+
+Create separate register/login for reader and librarian
+User proper roles for different endpoints
+
+
+Should sanitize input
+=> When adding user, or book or updating, we should be careful about handling the input data while creating or updating.
+
+Swagger docs: https://medium.com/@techshubhu/simplifying-api-development-with-swagger-integration-in-node-js-and-express-js-ad830747a2e8
+
+
+Use .env file
+Proper architecture should be followed.
+Should have modes, controllers, routes separately defined.
+(If possible can add a service layer too)

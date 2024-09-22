@@ -4,125 +4,127 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/src/views/styles.css">
+    <link rel="stylesheet" href="./src/views/styles.css">
+    <link rel="stylesheet" href="./src/views/styles/tailwind.css">
     <title>Library Management System</title>
 
 </head>
 <style>
     /* General Styles */
-body {
-    font-family: Arial, sans-serif;
-    line-height: 1.6;
-    margin: 0;
-    padding: 0;
-}
+    body {
+        font-family: Arial, sans-serif;
+        line-height: 1.6;
+        margin: 0;
+        padding: 0;
+    }
 
-header {
-    background: #333;
-    color: #fff;
-    padding: 1rem;
-    text-align: center;
-}
+    header {
+        background: #333;
+        color: #fff;
+        padding: 1rem;
+        text-align: center;
+    }
 
-header h1 {
-    margin: 0;
-}
+    header h1 {
+        margin: 0;
+    }
 
-nav {
-    margin-top: 0.5rem;
-}
+    nav {
+        margin-top: 0.5rem;
+    }
 
-nav a {
-    color: #fff;
-    margin: 0 1rem;
-    text-decoration: none;
-}
+    nav a {
+        color: #fff;
+        margin: 0 1rem;
+        text-decoration: none;
+    }
 
-nav a:hover {
-    text-decoration: underline;
-}
+    nav a:hover {
+        text-decoration: underline;
+    }
 
-/* Main Content */
-main {
-    padding: 1rem;
-}
+    /* Main Content */
+    main {
+        padding: 1rem;
+    }
 
-section {
-    margin-bottom: 2rem;
-}
+    section {
+        margin-bottom: 2rem;
+    }
 
-h2 {
-    background: #f4f4f4;
-    padding: 0.5rem;
-    border-radius: 5px;
-    margin-bottom: 1rem;
-}
+    h2 {
+        background: #f4f4f4;
+        padding: 0.5rem;
+        border-radius: 5px;
+        margin-bottom: 1rem;
+    }
 
-/* Forms */
-.form {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    max-width: 500px;
-    margin: 0 auto;
-    padding: 1rem;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    background: #fff;
-}
+    /* Forms */
+    .form {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        max-width: 500px;
+        margin: 0 auto;
+        padding: 1rem;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        background: #fff;
+    }
 
-.form label {
-    margin-bottom: 0.5rem;
-}
+    .form label {
+        margin-bottom: 0.5rem;
+    }
 
-.form input {
-    padding: 0.5rem;
-    margin-bottom: 1rem;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-}
+    .form input {
+        padding: 0.5rem;
+        margin-bottom: 1rem;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+    }
 
-.form button {
-    padding: 0.5rem;
-    border: none;
-    border-radius: 5px;
-    background: #333;
-    color: #fff;
-    cursor: pointer;
-}
+    .form button {
+        padding: 0.5rem;
+        border: none;
+        border-radius: 5px;
+        background: #333;
+        color: #fff;
+        cursor: pointer;
+    }
 
-.form button:hover {
-    background: #555;
-}
+    .form button:hover {
+        background: #555;
+    }
 
-/* Table */
-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 1rem;
-}
+    /* Table */
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 1rem;
+    }
 
-table th, table td {
-    padding: 0.75rem;
-    border: 1px solid #ddd;
-    text-align: left;
-}
+    table th,
+    table td {
+        padding: 0.75rem;
+        border: 1px solid #ddd;
+        text-align: left;
+    }
 
-table th {
-    background: #f4f4f4;
-}
+    table th {
+        background: #f4f4f4;
+    }
 
-/* User List */
-#userList {
-    margin-top: 1rem;
-}
-
+    /* User List */
+    #userList {
+        margin-top: 1rem;
+    }
 </style>
 
 <body>
     <header>
         <h1>Welcome to the Library Management System</h1>
-        
+        <h3>Hi, {{ name }}</h3>
+
         <nav>
             <a href="/login">Login</a>
             <a href="/register">Register</a>
@@ -264,13 +266,19 @@ table th {
                 });
 
                 const data = await response.json();
+
                 if (response.ok) {
+                    // Store the token in localStorage or a cookie
+                    localStorage.setItem('token', data.token);
                     alert('Login successful!');
+                    // Optionally redirect the user to another page
+                    window.location.href = '/dashboard'; // Replace with your target URL
                 } else {
                     alert(`Error logging in: ${data.message}`);
                 }
             } catch (error) {
                 alert('Request failed, check console for details.');
+                console.error('Error:', error); // Log the error for debugging
             }
         });
 
@@ -405,6 +413,38 @@ table th {
                 authorList.innerHTML = 'Error fetching authors';
             }
         });
+
+        async function checkLoginStatus() {
+            const token = localStorage.getItem('token');
+            if (token) {
+                try {
+                    const response = await fetch('/user/profile', {
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Content-Type': 'application/json'
+                        }
+                    });
+                    const data = await response.json();
+                    if (response.ok) {
+                        // User is logged in
+                        document.getElementById('loginButton').style.display = 'none';
+                        document.getElementById('registerButton').style.display = 'none';
+                        document.getElementById('profileButton').style.display = 'block';
+                        document.getElementById('logoutButton').style.display = 'block';
+                    } else {
+                        // User is not logged in
+                        document.getElementById('loginButton').style.display = 'block';
+                        document.getElementById('registerButton').style.display = 'block';
+                        document.getElementById('profileButton').style.display = 'none';
+                        document.getElementById('logoutButton').style.display = 'none';
+                    }
+                } catch (error) {
+                    console.error('Error checking login status', error);
+                }
+            }
+        }
+        // Call the function on page load
+        window.onload = checkLoginStatus;
 
     </script>
 

@@ -1,25 +1,26 @@
 import connection from "../db/connection.js";
 import bcrypt from "bcrypt";
 
+
 class UserModel {
   async createUser(userData) {
-    const { name, email, password } = userData;
-    const hashedPassword = await bcrypt.hash(password, 10); // Hash the password
+    const { name, email, password, role } = userData; // Include role
 
-    const query = `INSERT INTO users (name, email, password) VALUES (?, ?, ?)`;
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const query = `INSERT INTO users (name, email, password, role) VALUES (?, ?, ?, ?) RETURNING *`;
 
     try {
-      const [insertResult] = await connection.execute(query, [
-        name,
-        email,
-        hashedPassword,
-      ]);
-      return insertResult.insertId;
+        const [rows] = await connection.execute(query, [name, email, hashedPassword, role]);
+        return rows[0]; // Return the created user
     } catch (error) {
-      console.error("Error inserting user into database:", error);
-      throw new Error("Error inserting user into database.");
+        console.error("Error inserting user into database:", error);
+        throw new Error("Error inserting user into database.");
     }
-  }
+}
+
+  
+  
 
   // Method to find a user by email
   async findUserByEmail(email) {
@@ -69,6 +70,35 @@ class UserModel {
       throw new Error("Error fetching users from database.");
     }
   }
+
+  async updateUserRole(userId, role) {
+    const query = `UPDATE users SET role = ? WHERE id = ?`;
+  
+    try {
+      await connection.execute(query, [role, userId]);
+    } catch (error) {
+      console.error("Error updating user role:", error);
+      throw new Error("Error updating user role.");
+    }
+  }
+
+  async findUserById(id) {
+    const query = `SELECT * FROM users WHERE id = ?`;
+    try {
+      const [rows] = await connection.execute(query, [id]);
+      return rows[0]; // Return the first user found
+    } catch (error) {
+      console.error("Error finding user by ID:", error);
+      throw new Error("Error finding user by ID.");
+    }
+  }
+  
+  
+
+  
+
+
+  
 }
 
 export default new UserModel();

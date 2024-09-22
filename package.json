@@ -6,13 +6,15 @@
   "type": "module",
   "scripts": {
     "start": "node index.js",
-    "dev": "nodemon index.js"
+    "dev": "nodemon index.js",
+    "build:css": "tailwindcss -i ./src/styles/tailwind.css -o ./public/styles.css"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
     "bcrypt": "^5.1.1",
+    "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "ejs": "^3.1.10",
     "express": "^4.19.2",
@@ -21,5 +23,8 @@
     "nodemon": "^3.1.4",
     "project2librarymanagement": "file:",
     "sequelize": "^6.37.3"
+  },
+  "devDependencies": {
+    "tailwindcss": "^3.4.10"
   }
 }
