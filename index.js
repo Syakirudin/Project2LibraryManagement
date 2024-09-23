@@ -1,20 +1,13 @@
 import express from "express";
 import cors from 'cors';
 import "dotenv/config";
-import testRouter from "./src/routers/test.router.js";
-import UserRouter from "./src/routers/userRouter.js";
-import BookRouter from "./src/routers/bookRouter.js";
-import AuthorRouter from "./src/routers/authorRouter.js";
-import DatabaseModel from "./src/models/DatabaseModel.js";
-import "./src/db/connection.js"; // Ensure database connection is properly established
+import AuthRouter from './src/routers/authRouter.js';
+import { authenticateJWT, authorizeAdmin } from './src/middleware/authMiddleware.js';
+import { testConnection } from './src/db/connection.js'; 
 
-// Middleware setup
+// Initialize the app
 const app = express();
 const port = process.env.PORT || 8383;
- 
-// Set view engine and views directory
-app.set("view engine", "ejs");
-app.set("views", "./src/views");
 
 // Middleware for parsing request bodies and serving static files
 app.use(express.json());
@@ -26,22 +19,21 @@ app.use(cors({
   origin: 'http://localhost:3000', // Replace with your frontend URL
 }));
 
-// Register routers
-app.use("/", testRouter); // Ensure `testRouter` is correctly defined
-app.use("/user", UserRouter);
-app.use("/book", BookRouter);
-app.use("/author", AuthorRouter);
+// Auth Routes
+app.use('/auth', AuthRouter);
 
-// Uncomment if `NotFoundRouter` is used for handling undefined routes
-// app.use("*", NotFoundRouter);
+// Admin route (protected by JWT authentication and admin authorization)
+app.get("/admin", authenticateJWT, authorizeAdmin, (req, res) => {
+  res.send("Welcome to the Admin Dashboard!");
+});
 
-// Start the server and create tables
+// User route (only JWT authentication is required)
+app.get("/user", authenticateJWT, (req, res) => {
+  res.send("Welcome to the User Dashboard!");
+});
+
+// Start the server and test database connection
 app.listen(port, async () => {
   console.log(`Server is running on http://localhost:${port}`);
-  try {
-    await DatabaseModel.createTables(); // Ensure this function creates tables correctly
-    console.log("Tables created successfully");
-  } catch (error) {
-    console.error("Error creating tables:", error);
-  }
+  await testConnection(); // Test the database connection when server starts
 });
