@@ -1,13 +1,15 @@
 import express from "express";
 import cors from "cors";
 import "dotenv/config";
-import AuthRouter from "./src/routers/authRouter.js";
-import BookRouter from "./src/routers/bookRouter.js";
+
 import {
   authenticateJWT,
   authorizeAdmin,
 } from "./src/middleware/authMiddleware.js";
 import { testConnection } from "./src/db/connection.js";
+
+import AuthRouter from "./src/routers/authRouter.js";
+import BookRouter from './src/routers/bookRouter.js';
 
 // Initialize the app
 const app = express();
@@ -25,9 +27,10 @@ app.use(
   })
 );
 
-// Auth Routes
+
 app.use("/auth", AuthRouter);
-app.use("/books", BookRouter);
+app.use('/books', BookRouter);
+
 
 // Admin route (protected by JWT authentication and admin authorization)
 app.get("/admin", authenticateJWT, authorizeAdmin, (req, res) => {

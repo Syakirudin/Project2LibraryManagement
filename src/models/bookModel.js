@@ -1,86 +1,68 @@
+// CREATE TABLE IF NOT EXISTS books (
+//     id INT AUTO_INCREMENT PRIMARY KEY,
+//     title VARCHAR(255) NOT NULL,
+//     author VARCHAR(255) NOT NULL,
+//     genre VARCHAR(100),
+//     date_add DATETIME DEFAULT CURRENT_TIMESTAMP
+// );
+
 import connection from "../db/connection.js";
 
 class BookModel {
-  // Add a new book
-  async addBook({ title, author_id, published_date }) {
-    const [result] = await connection.execute(
-      "INSERT INTO books (title, author_id, published_date) VALUES (?, ?, ?)",
-      [title, author_id, published_date]
-    );
-    return result;
-  }
+    // Create the books table if it doesn't exist
+    static async createTable() {
+        const query = `
+          CREATE TABLE IF NOT EXISTS books (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            title VARCHAR(255) NOT NULL,
+            author VARCHAR(255) NOT NULL,
+            genre VARCHAR(100),
+            date_add DATETIME DEFAULT CURRENT_TIMESTAMP
+        );`;
+        await connection.execute(query); // Changed from executeQuery to connection.execute
+    }
 
-  // Edit a book by ID
-  async editBookById({ id, title, author_id, published_date }) {
-    const [result] = await connection.execute(
-      "UPDATE books SET title = ?, author_id = ?, published_date = ? WHERE id = ?",
-      [title, author_id, published_date, id]
-    );
-    return result;
-  }
+    // Add a new book to the books table
+    static async addBook({ title, author, genre }) {
+        const [result] = await connection.execute(
+            'INSERT INTO books (title, author, genre) VALUES (?, ?, ?)',
+            [title, author, genre]
+        );
+        return result.insertId; // Return the inserted book's ID
+    }
 
-  // Find book by title or author
-  async findBookByTitleOrAuthor(title, author_id) {
-    const [rows] = await connection.execute(
-      `SELECT * FROM books WHERE title = ? OR author_id = ?`,
-      [title, author_id]
-    );
-    return rows;
-  }
+    // Find all books
+    static async findAll() {
+        const [rows] = await connection.execute('SELECT * FROM books');
+        return rows;
+    }
 
-  // Find all books
-  async findAllBooks() {
-    const [rows] = await connection.execute(
-      `SELECT books.id, books.title, books.published_date, authors.name as author
-            FROM books
-            JOIN authors ON books.author_id = authors.id`
-    );
-    return rows;
-  }
+    // Find books by title, author, or genre
+    static async findByAttributes(title, author, genre) { // Renamed for clarity
+        const [rows] = await connection.execute(
+            'SELECT * FROM books WHERE title = ? OR author = ? OR genre = ?',
+            [title, author, genre]
+        );
+        return rows;
+    }
 
-  // Delete a book by ID
-  async deleteBook({ id }) {
-    const [result] = await connection.execute(
-      "DELETE FROM books WHERE id = ?",
-      [id]
-    );
-    return result;
-  }
+    // Edit book details
+    static async editBook(id, title, author, genre) {
+        const [result] = await connection.execute(
+            'UPDATE books SET title = ?, author = ?, genre = ? WHERE id = ?',
+            [title, author, genre, id]
+        );
+        return result.affectedRows; // Return the number of rows affected
+    }
 
-  // Check if book exists by title
-  async findBookByTitle(title) {
-    const [rows] = await connection.execute(
-      "SELECT * FROM books WHERE title = ?",
-      [title]
-    );
-    return rows[0]; // Return the first found record
-  }
-
-  // Check if author exists by ID (author ID comes from another table)
-  async findAuthorById(author_id) {
-    const [rows] = await connection.execute(
-      "SELECT * FROM authors WHERE id = ?",
-      [author_id]
-    );
-    return rows[0]; // Return the first found record
-  }
-
-  // Find author by name
-  async findAuthorByName(authorName) {
-    const [rows] = await connection.execute(
-      "SELECT * FROM authors WHERE name = ? LIMIT 1",
-      [authorName]
-    );
-    return rows[0]; // Return the author object if found
-  }
-
-  async createAuthor(authorName) {
-    const [result] = await connection.execute(
-      "INSERT INTO authors (name) VALUES (?)",
-      [authorName]
-    );
-    return result.insertId; // Return the ID of the new author
-  }
+    // Delete a book by ID
+    static async deleteBook(id) {
+        const [result] = await connection.execute(
+            'DELETE FROM books WHERE id = ?',
+            [id]
+        );
+        return result.affectedRows; // Return the number of rows deleted
+    }
 }
 
-export default new BookModel();
+export default BookModel;
