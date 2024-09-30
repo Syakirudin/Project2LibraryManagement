@@ -10,6 +10,7 @@ import { testConnection } from "./src/db/connection.js";
 
 import AuthRouter from "./src/routers/authRouter.js";
 import BookRouter from './src/routers/bookRouter.js';
+import TranscRouter from './src/routers/transcRouter.js';
 
 // Initialize the app
 const app = express();
@@ -23,13 +24,14 @@ app.use(express.static("public"));
 // Enable CORS
 app.use(
   cors({
-    origin: "http://localhost:3000", // Replace with your frontend URL
+    origin: "http://localhost:3001", // Replace with your frontend URL
   })
 );
 
 
 app.use("/auth", AuthRouter);
 app.use('/books', BookRouter);
+app.use('/transactions', TranscRouter);
 
 
 // Admin route (protected by JWT authentication and admin authorization)
