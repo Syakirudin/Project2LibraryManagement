@@ -1,12 +1,11 @@
 {
   "name": "project2librarymanagement",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "",
-  "main": "index.js",
-  "type": "module",
+  "main": "server.js",
   "scripts": {
-    "start": "node index.js",
-    "dev": "nodemon index.js",
+    "start": "node server.js",
+    "dev": "nodemon server.js",
     "build:css": "tailwindcss -i ./src/styles/tailwind.css -o ./public/styles.css"
   },
   "keywords": [],
@@ -18,11 +17,18 @@
     "dotenv": "^16.4.5",
     "ejs": "^3.1.10",
     "express": "^4.19.2",
+    "express-async-handler": "^1.2.0",
+    "express-session": "^1.18.0",
     "jsonwebtoken": "^9.0.2",
     "mysql2": "^3.11.0",
     "nodemon": "^3.1.4",
+    "passport": "^0.7.0",
+    "passport-local": "^1.0.0",
     "project2librarymanagement": "file:",
-    "sequelize": "^6.37.3"
+    "sequelize": "^6.37.3",
+    "swagger": "^0.7.5",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.1"
   },
   "devDependencies": {
     "tailwindcss": "^3.4.10"
